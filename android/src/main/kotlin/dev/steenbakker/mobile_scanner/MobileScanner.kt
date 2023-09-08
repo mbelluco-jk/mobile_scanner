@@ -4,6 +4,7 @@ import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.graphics.Rect
+import android.media.CamcorderProfile
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
@@ -22,6 +23,7 @@ import dev.steenbakker.mobile_scanner.utils.YuvToRgbConverter
 import io.flutter.view.TextureRegistry
 import java.io.ByteArrayOutputStream
 import kotlin.math.roundToInt
+import android.util.Size
 
 
 class MobileScanner(
@@ -230,6 +232,12 @@ class MobileScanner(
             val analysisBuilder = ImageAnalysis.Builder()
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
 //                analysisBuilder.setTargetResolution(Size(1440, 1920))
+            
+            val camProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH)
+            analysisBuilder.setTargetResolution(
+                Size(camProfile.videoFrameWidth, camProfile.videoFrameHeight)
+            )
+
             val analysis = analysisBuilder.build().apply { setAnalyzer(executor, captureOutput) }
 
             camera = cameraProvider!!.bindToLifecycle(
